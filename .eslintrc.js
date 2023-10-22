@@ -4,6 +4,6 @@ module.exports = {
   plugins: ['react', 'prettier', 'standard'],
   rules: {
     'object-curly-spacing': ['error', 'always'],
-    'max-len': ['warn', {code: 120}],
-  },
+    'max-len': ['warn', { code: 120 }]
+  }
 };
