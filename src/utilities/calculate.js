@@ -5,7 +5,7 @@ export const calculateResult = expression => {
   const precedence = {
     '+': 1,
     '-': 1,
-    '*': 2,
+    X: 2,
     '/': 2
   };
 
@@ -58,7 +58,7 @@ export const calculateResult = expression => {
       while (operators[operators.length - 1] !== '(') {
         performOperation();
       }
-      operators.pop(); // Pop the opening parenthesis
+      operators.pop();
     } else {
       throw new Error('Invalid token: ' + token);
     }

@@ -6,7 +6,7 @@ type ButtonProps = {
   onPress?: () => void;
   text: any;
   buttonTheme?: any;
-  textTheme?: object;
+  textTheme?: any;
 };
 
 export const Button: React.FC<ButtonProps> = ({ onPress, text, buttonTheme, textTheme }) => {
