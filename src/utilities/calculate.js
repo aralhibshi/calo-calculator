@@ -6,7 +6,8 @@ export const calculateResult = expression => {
     '+': 1,
     '-': 1,
     X: 2,
-    '/': 2
+    '/': 2,
+    '%': 3
   };
 
   const performOperation = () => {
@@ -27,10 +28,16 @@ export const calculateResult = expression => {
       case '/':
         operands.push(operand1 / operand2);
         break;
+      case '%':
+        operands.push((operand1 / 100) * operand2);
+        break;
       default:
         throw new Error('Invalid operator: ' + operator);
     }
   };
+
+  let numberBuffer = '';
+  let isParsingDecimal = false;
 
   for (let i = 0; i < expression.length; i++) {
     const token = expression[i];
@@ -39,29 +46,45 @@ export const calculateResult = expression => {
       continue;
     }
 
-    if (!isNaN(token)) {
-      let number = parseFloat(token);
-      while (i + 1 < expression.length && !isNaN(expression[i + 1])) {
-        i++;
-        number = number * 10 + parseFloat(expression[i]);
+    if (!isNaN(token) || token === '.') {
+      // Build the number character by character
+      if (token === '.' && isParsingDecimal) {
+        throw new Error('Invalid number format');
       }
-      operands.push(number);
-    } else if (token in precedence) {
-      const currentPrecedence = precedence[token];
-      while (operators.length > 0 && currentPrecedence <= precedence[operators[operators.length - 1]]) {
-        performOperation();
+      if (token === '.') {
+        isParsingDecimal = true;
       }
-      operators.push(token);
-    } else if (token === '(') {
-      operators.push(token);
-    } else if (token === ')') {
-      while (operators[operators.length - 1] !== '(') {
-        performOperation();
-      }
-      operators.pop();
+      numberBuffer += token;
     } else {
-      throw new Error('Invalid token: ' + token);
+      if (numberBuffer) {
+        const number = isParsingDecimal ? parseFloat(numberBuffer) : parseInt(numberBuffer, 10);
+        operands.push(number);
+        numberBuffer = '';
+        isParsingDecimal = false;
+      }
+
+      if (token in precedence) {
+        const currentPrecedence = precedence[token];
+        while (operators.length > 0 && currentPrecedence <= precedence[operators[operators.length - 1]]) {
+          performOperation();
+        }
+        operators.push(token);
+      } else if (token === '(') {
+        operators.push(token);
+      } else if (token === ')') {
+        while (operators[operators.length - 1] !== '(') {
+          performOperation();
+        }
+        operators.pop();
+      } else {
+        throw new Error('Invalid token: ' + token);
+      }
     }
+  }
+
+  if (numberBuffer) {
+    const number = isParsingDecimal ? parseFloat(numberBuffer) : parseInt(numberBuffer, 10);
+    operands.push(number);
   }
 
   while (operators.length > 0) {

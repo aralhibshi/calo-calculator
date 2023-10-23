@@ -24,6 +24,7 @@ export const App: React.FC = () => {
     } else if (text === '=') {
       try {
         let calculation = calculateResult(expression);
+        console.log(expression);
 
         if (calculation > 10) {
           setResult(':(');
