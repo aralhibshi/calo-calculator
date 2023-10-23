@@ -9,18 +9,18 @@ type ButtonProps = {
   textTheme?: any;
 };
 
-export const Button: React.FC<ButtonProps> = ({ onPress, text, buttonTheme, textTheme }) => {
+export const Button: React.FC<ButtonProps> = ({ onPress, text, buttonTheme }) => {
   const [scaleAnim] = React.useState(new Animated.Value(1));
 
   const handlePress = () => {
     Animated.timing(scaleAnim, {
       toValue: 0.8,
-      duration: 90,
+      duration: 50,
       useNativeDriver: true
     }).start(() => {
       Animated.timing(scaleAnim, {
         toValue: 1,
-        duration: 90,
+        duration: 50,
         useNativeDriver: true
       }).start();
     });
@@ -33,10 +33,18 @@ export const Button: React.FC<ButtonProps> = ({ onPress, text, buttonTheme, text
   return (
     <Pressable
       style={({ pressed }) => [
-        {
-          backgroundColor: theme.buttonBackgroundColorDefault,
-          ...(pressed && { backgroundColor: theme.buttonBackgroundColorPressed })
-        },
+        buttonTheme === 'C' && !pressed
+          ? styles.buttonRed
+          : buttonTheme === 'secondary' && !pressed
+          ? styles.buttonSecondary
+          : buttonTheme === 'accent' && !pressed
+          ? styles.buttonAccent
+          : buttonTheme === 'default' && !pressed
+          ? styles.buttonDefault
+          : buttonTheme === 'equal' && !pressed
+          ? styles.buttonEqual
+          : '',
+        buttonTheme === 'C' && pressed ? styles.buttonPressedRed : pressed ? styles.buttonPressed : '',
         styles.button,
         buttonTheme
       ]}
@@ -47,7 +55,9 @@ export const Button: React.FC<ButtonProps> = ({ onPress, text, buttonTheme, text
           transform: [{ scale: scaleAnim }]
         }}
       >
-        <Text style={[styles.buttonText, textTheme]}>{text}</Text>
+        <Text style={[styles.buttonText, buttonTheme === 'secondary' ? styles.textBlack : styles.buttonText]}>
+          {text}
+        </Text>
       </Animated.View>
     </Pressable>
   );
@@ -65,9 +75,33 @@ const styles = StyleSheet.create({
     borderRadius: Math.floor(buttonWidth),
     margin: 5
   },
-
+  buttonRed: {
+    backgroundColor: theme.buttonBackgroundColorRed
+  },
+  buttonAccent: {
+    backgroundColor: theme.buttonBackgroundColorAccent
+  },
+  buttonSecondary: {
+    backgroundColor: theme.buttonBackgroundColorSecondary,
+    color: theme.colorBlack
+  },
+  buttonEqual: {
+    backgroundColor: theme.buttonBackgroungColorEqual
+  },
+  buttonDefault: {
+    backgroundColor: theme.buttonBackgroundColorDefault
+  },
+  buttonPressedRed: {
+    backgroundColor: theme.buttonBackgroundColorPressedRed
+  },
+  buttonPressed: {
+    backgroundColor: theme.buttonBackgroundColorPressed
+  },
   buttonText: {
     color: theme.colorWhite,
     fontSize: theme.fontSizeButton
+  },
+  textBlack: {
+    color: theme.colorBlack
   }
 });

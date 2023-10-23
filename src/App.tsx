@@ -50,16 +50,8 @@ export const App: React.FC = () => {
     }
   };
 
-  const textBlack = styles.textBlack;
-  const btnSecond = styles.buttonSecondary;
-
   const calculatorButtonRows = [
-    [
-      ['C', '', styles.buttonRed],
-      ['+/-', textBlack, btnSecond],
-      ['%', textBlack, btnSecond],
-      ['/', '', styles.buttonAccent]
-    ],
+    ['C', ['+/-'], '%', '/'],
     ['7', '8', '9', 'X'],
     ['4', '5', '6', '-'],
     ['1', '2', '3', '+'],
@@ -74,17 +66,20 @@ export const App: React.FC = () => {
 
         {calculatorButtonRows.map((row, rowIndex) => (
           <Row key={rowIndex}>
-            {row.map(([text, textStyle, buttonStyle], index) => (
+            {row.map(([text], index) => (
               <Button
                 key={index}
                 text={text}
-                textTheme={textStyle}
                 buttonTheme={
-                  typeof text === 'string' && ['X', '-', '+'].includes(text)
-                    ? [styles.buttonAccent]
+                  text === 'C'
+                    ? 'C'
+                    : typeof text === 'string' && ['+/-', '%'].includes(text)
+                    ? 'secondary'
+                    : typeof text === 'string' && ['X', '-', '+', '/'].includes(text)
+                    ? 'accent'
                     : text === '='
-                    ? styles.buttonEqual
-                    : buttonStyle
+                    ? 'equal'
+                    : 'default'
                 }
                 onPress={() => handlePress(text)}
               >
@@ -112,24 +107,5 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginRight: 20,
     marginBottom: 10
-  },
-  buttonRed: {
-    backgroundColor: theme.buttonBackgroundColorRed
-  },
-  buttonAccent: {
-    backgroundColor: theme.buttonBackgroundColorAccent
-  },
-  buttonSecondary: {
-    backgroundColor: theme.buttonBackgroundColorSecondary
-  },
-  buttonClear: {
-    backgroundColor: ''
-  },
-  buttonEqual: {
-    borderWidth: 3,
-    borderColor: theme.borderColor
-  },
-  textBlack: {
-    color: theme.colorBlack
   }
 });
