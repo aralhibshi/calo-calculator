@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, Pressable, Text, StyleSheet } from 'react-native';
+import { Dimensions, Pressable, Text, StyleSheet, Animated } from 'react-native';
 import { theme } from '../theme';
 
 type ButtonProps = {
@@ -10,9 +10,45 @@ type ButtonProps = {
 };
 
 export const Button: React.FC<ButtonProps> = ({ onPress, text, buttonTheme, textTheme }) => {
+  const [scaleAnim] = React.useState(new Animated.Value(1));
+
+  const handlePress = () => {
+    Animated.timing(scaleAnim, {
+      toValue: 0.8,
+      duration: 90,
+      useNativeDriver: true
+    }).start(() => {
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 90,
+        useNativeDriver: true
+      }).start();
+    });
+
+    if (onPress) {
+      onPress();
+    }
+  };
+
   return (
-    <Pressable style={[styles.button, buttonTheme]} onPress={onPress}>
-      <Text style={[styles.buttonText, textTheme]}>{text}</Text>
+    <Pressable
+      style={({ pressed }) => [
+        {
+          backgroundColor: theme.buttonBackgroundColorDefault,
+          ...(pressed && { backgroundColor: theme.buttonBackgroundColorPressed })
+        },
+        styles.button,
+        buttonTheme
+      ]}
+      onPress={handlePress}
+    >
+      <Animated.View
+        style={{
+          transform: [{ scale: scaleAnim }]
+        }}
+      >
+        <Text style={[styles.buttonText, textTheme]}>{text}</Text>
+      </Animated.View>
     </Pressable>
   );
 };
@@ -22,7 +58,6 @@ const buttonWidth = screen.width / 4;
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: theme.buttonBackgroundColorDefault,
     flex: 1,
     height: Math.floor(buttonWidth - 10),
     alignItems: 'center',

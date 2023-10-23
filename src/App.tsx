@@ -87,7 +87,9 @@ export const App: React.FC = () => {
                     : buttonStyle
                 }
                 onPress={() => handlePress(text)}
-              />
+              >
+                {}
+              </Button>
             ))}
           </Row>
         ))}
